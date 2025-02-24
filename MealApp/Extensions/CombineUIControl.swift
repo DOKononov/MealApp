@@ -43,7 +43,9 @@ extension UIButton {
 }
 
 extension UITextField {
-    func textDidChanged() -> AnyPublisher<Void, Never> {
+    func textDidChanged() -> AnyPublisher<String?, Never> {
         return combine.onEvent(.editingChanged)
+        .map { [weak self] _ in  self?.text }
+        .eraseToAnyPublisher()
     }
 }
