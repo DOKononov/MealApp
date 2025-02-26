@@ -1,12 +1,12 @@
 //
-//  MainRouter.swift
+//  MealListRouter.swift
 //
 //  Created by Dmitry Kononov on 24.02.25
 //
 
 import UIKit
 
-final class MainRouter: MainRouterProtocol {
+final class MealListRouter: MealListRouterProtocol {
     weak var root: UIViewController?
     private let container: Container
 
@@ -18,12 +18,6 @@ final class MainRouter: MainRouterProtocol {
         let vc = DetailsAssembler.make(meal: meal, container: container)
         root?.navigationController?.pushViewController(vc, animated: true)
     }
-    
-    func openMealListModule() {
-        let vc = MealListAssembler.make(container: container)
-        root?.navigationController?.pushViewController(vc, animated: true)
-    }
-    
 }
 
 

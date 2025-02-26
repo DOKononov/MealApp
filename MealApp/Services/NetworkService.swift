@@ -46,4 +46,24 @@ final class NetworkService {
         }
         .eraseToAnyPublisher()
     }
+    
+    func getMeals(by letter: String) -> AnyPublisher<[Meal], Error> {
+        return URLSession.shared.dataTaskPublisher(
+            for: host.appending(
+                path: "search.php"
+            ).appending(
+                queryItems: [.init(name: "f", value: letter)]
+            )
+        )
+        .tryMap({ element in
+            guard let response = element.response as? HTTPURLResponse,
+                  (200...299).contains(response.statusCode) else {
+                throw URLError(.badServerResponse)
+            }
+            return element.data
+        })
+        .decode(type: MealResponse.self, decoder: JSONDecoder())
+        .map { $0.meals ?? [] }
+        .eraseToAnyPublisher()
+    }
 }

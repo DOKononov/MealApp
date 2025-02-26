@@ -9,7 +9,7 @@ import Combine
 
 protocol MainRouterProtocol {
     func openDetailsMeal(meal: Meal)
-    
+    func openMealListModule()
 }
 
 protocol MainNetworkServiceProtocol {
@@ -39,6 +39,10 @@ final class MainVM: MainViewModelProtocol {
             .compactMap { $0 }
             .receive(on: DispatchQueue.main)
             .sink(receiveValue: { [router] in router.openDetailsMeal(meal: $0) })
+            .store(in: &bag)
+        
+        listDidTap
+            .sink(receiveValue: { [router] in router.openMealListModule() })
             .store(in: &bag)
     }
 }
