@@ -6,6 +6,7 @@
 
 import Foundation
 import Combine
+import Storage
 
 protocol MealListRouterProtocol {
     func openDetailsMeal(meal: Meal)
@@ -19,6 +20,7 @@ final class MealListVM: MealListViewModelProtocol {
     
     private let router: MealListRouterProtocol
     private let networkService: MealListNetworkServiceProtocol
+    private let storage = MealsStorage()
     private var bag: Set<AnyCancellable> = []
 
     @CurrentValue(value: [])
@@ -60,7 +62,12 @@ final class MealListVM: MealListViewModelProtocol {
             .store(in: &bag)
         
         didAddToFavourite
-            .sink(receiveValue: { print("\($0.name) did add to favourite") })
+            .map { MealToDTOMapper.map(from: $0) }
+            .sink(receiveValue: { [storage] in
+                storage.create(dto: $0) { _ in }
+                print("\($0.name) did add to favourite")
+                
+            })
             .store(in: &bag)
     }
 }
