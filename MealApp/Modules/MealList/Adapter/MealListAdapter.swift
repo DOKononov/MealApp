@@ -12,6 +12,8 @@ final class MealListAdapter: NSObject, MealListAdapterProtocol {
     
     private enum Const { static let offsetRowNumber = 5 }
     private var bag: Set<AnyCancellable> = []
+    @Passthrough
+    var didAddToFavourite: AnyPublisher<Meal, Never>
     
     var items: CurrentValueSubject<[MealListSection], Never> = .init([])
     
@@ -59,9 +61,12 @@ extension MealListAdapter: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "\(MealListItemCell.self)", for: indexPath) as? MealListItemCell
-        cell?.config(with: items.value[indexPath.section].meals[indexPath.row])
-        return cell ?? UITableViewCell()
+        let cell = tableView.dequeueReusableCell(withIdentifier: "\(MealListItemCell.self)", for: indexPath) as! MealListItemCell
+        cell.config(with: items.value[indexPath.section].meals[indexPath.row])
+        
+        cell.bind(to: _didAddToFavourite.combine)
+        
+        return cell
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {

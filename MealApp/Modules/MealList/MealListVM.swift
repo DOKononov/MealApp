@@ -16,6 +16,7 @@ protocol MealListNetworkServiceProtocol {
 }
 
 final class MealListVM: MealListViewModelProtocol {
+    
     private let router: MealListRouterProtocol
     private let networkService: MealListNetworkServiceProtocol
     private var bag: Set<AnyCancellable> = []
@@ -24,6 +25,8 @@ final class MealListVM: MealListViewModelProtocol {
     var items: AnyPublisher<[MealListSection], Never>
     var didSelectItem: PassthroughSubject<Meal, Never> = .init()
     var loadNextSection: PassthroughSubject<Void, Never> = .init()
+    var didAddToFavourite: PassthroughSubject<Meal, Never> = .init()
+
     
     private var abc: [String] = [ "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "", "u", "v", "w", "x", "y", "z"]
     
@@ -54,6 +57,10 @@ final class MealListVM: MealListViewModelProtocol {
             }
             .map { [_items] in _items.combine.value + [$0] }
             .subscribe(_items.combine)
+            .store(in: &bag)
+        
+        didAddToFavourite
+            .sink(receiveValue: { print("\($0.name) did add to favourite") })
             .store(in: &bag)
     }
 }

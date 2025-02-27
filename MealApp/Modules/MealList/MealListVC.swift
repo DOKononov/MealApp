@@ -14,6 +14,7 @@ protocol MealListViewModelProtocol {
     //in
     var didSelectItem: PassthroughSubject<Meal, Never> { get }
     var loadNextSection: PassthroughSubject<Void, Never> { get }
+    var didAddToFavourite: PassthroughSubject<Meal, Never> { get }
 }
 
 protocol MealListAdapterProtocol {
@@ -23,6 +24,7 @@ protocol MealListAdapterProtocol {
     //out
     var didSelectItem: AnyPublisher<Meal, Never> { get }
     var didScrollToEnd: AnyPublisher<Void, Never> { get }
+    var didAddToFavourite: AnyPublisher<Meal, Never> { get }
 }
 
 final class MealListVC: UIViewController {
@@ -61,6 +63,10 @@ final class MealListVC: UIViewController {
         
         adapter.didScrollToEnd
             .subscribe(viewModel.loadNextSection)
+            .store(in: &bag)
+        
+        adapter.didAddToFavourite
+            .subscribe(viewModel.didAddToFavourite)
             .store(in: &bag)
     }
     

@@ -14,7 +14,7 @@ final class ContainerConfigurator {
         let container = Container()
         
         container.lazyRegister { NetworkService() }
-//        container.lazyRegister { LaunchService() }
+        container.lazyRegister { LaunchService() }
         
         return container
     }
